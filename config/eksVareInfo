@@ -1,0 +1,41 @@
+{
+    "data": {
+       "maaltid": [
+        {
+         "id": 1,
+         "title": "Frokost",
+         "klokkeslett": "kl 09:00",
+         "icon": "plus",
+         "bilde": require("../assets/frokost.png")
+         "product": [
+
+            { "quantityType": "gram",
+                "maxTemperature": 30,
+                "country": "Storbritannia",
+                "image": "https://api.vetduat.no/api/images/Medium/50818907",
+                "name": "Fisherman's Friend Mint Strip 25g",
+                "producer": "CONAXESS TRADE NORWAY AS",
+                "ingredients": "Søtstoff (sorbitol), aromaer (peppermynteolje), antiklumpemiddel (magnesiumstearat), søtstoff (aspartam)  Sorbitol kan virke avførende ved store inntak. Inneholder en fenylalaninkilde.",}
+
+        ]
+        }
+        
+
+       ]
+
+
+
+     }
+
+
+
+    }
+
+
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="StartScan">
+        <Stack.Screen name="StartScan" component={StartScanScreen} />
+        <Stack.Screen name="Scanner" component={ScannerScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+}
