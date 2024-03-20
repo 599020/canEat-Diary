@@ -72,7 +72,7 @@ export default function DashBoard({ navigation }) {
       </View>
 
       
-        <ListItem title="Legg til måltid!" icon="plus" onPress={handleNyttMaaltid}  ></ListItem>
+
       
     </View>
   );
