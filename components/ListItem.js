@@ -12,10 +12,10 @@ export default function ListItem({ image, title, klokkeslett, icon, onPress, sty
 
   return (
     <View style={[styles.container, style]}>
-      <Image style={styles.image} source={imageSource} />
+      <Image style={styles.image} source={imageSource} resizeMode="contain" />
       <View style={styles.textContainer}>
         <AppText style={[styles.title, !klokkeslett && styles.centerVertically]} numberOfLines={1}>{title}</AppText>
-        {klokkeslett && <AppText style={styles.klokkeslett} numberOfLines={1}>{klokkeslett}</AppText>}
+        {klokkeslett && <AppText style={styles.klokkeslett} numberOfLines={1}>Kl: {klokkeslett}</AppText>}
       </View>
       <Icon containerStyle={styles.iconStyle} name={icon} onPress={onPress} />
     </View>

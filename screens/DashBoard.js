@@ -21,7 +21,7 @@ export default function DashBoard({ navigation }) {
       const fetchData = async () => {
         setLoading(true);
         try {
-          const response = await fetch('http://192.168.68.102:8080/data');
+          const response = await fetch('http://172.20.10.3:8080/data');
           const result = await response.json();
           setProductData(result.maaltid.maaltider);
            // Antar at responsen inneholder bare ett produkt
@@ -39,6 +39,8 @@ export default function DashBoard({ navigation }) {
       };
     }, [])
   );
+
+  
 
 
   const handleMaaltidPress = (maaltidId) => {
@@ -68,6 +70,9 @@ export default function DashBoard({ navigation }) {
           style={{ width: "100%" }}
         />
       </View>
+
+      
+        <ListItem title="Legg til måltid!" icon="plus" onPress={handleNyttMaaltid}  ></ListItem>
       
     </View>
   );
