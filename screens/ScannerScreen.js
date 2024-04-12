@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   text:{
     color: colors.skrift,
     fontSize: 20,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontWeight: "700",
     position: "absolute",
     top: 240,
@@ -340,14 +340,14 @@ const styles = StyleSheet.create({
   text2:{
     color: colors.skrift,
     fontSize: 20,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontWeight: "700",
     position: "absolute",
     top: 470,
 
   },
   buttonText:{
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontSize: 20,
 
   },
