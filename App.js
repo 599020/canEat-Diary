@@ -3,14 +3,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRefContext, createStackNavigator } from '@react-navigation/stack';
 import StartScanScreen from './screens/StartScanScreen';
 import ScannerScreen from "./screens/ScannerScreen";
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import FrokostScreen from './screens/FrokostScreen';
 import DashBoard from './screens/DashBoard';
+
+
+
 
 
 const Stack = createStackNavigator();
 
 export default function App() {
+
 
 
   return (
@@ -35,6 +39,7 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
+
   );
 }
 

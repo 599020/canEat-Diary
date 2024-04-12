@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Icon from '../components/Icon';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import colors from '../config/colors';
+import {API_BASE_URL } from '../config/ipAdress'
 
 const FrokostScreen = ({ navigation, route }) => {
   const [productData, setProductData] = useState(null);
@@ -32,7 +33,7 @@ const FrokostScreen = ({ navigation, route }) => {
   // funksjon for å si til backend å slette det gitte item og oppdatere productData
   const handleDeleteItem = async (item) => {
     try {
-      const response = await fetch('http://172.20.10.3:8080/data', {
+      const response = await fetch(`${API_BASE_URL}/sletteVare`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -55,13 +56,14 @@ const FrokostScreen = ({ navigation, route }) => {
   // Funksjon for å bekrefte den nye tittelen
   const confirmNewTitle = async () => {
     try {
-      const response = await fetch('http://172.20.10.3:8080/data/', {
+      const response = await fetch(`${API_BASE_URL}/endreMaaltidInfo`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          maaltidId: maaltidId,
+          maaltidId: maaltidId.id,
+          maaltidDato: maaltidId.idDato,
           newTitle: newTitle
         })
       });
@@ -81,14 +83,16 @@ const FrokostScreen = ({ navigation, route }) => {
   // Funksjon for å bekrefte den nye klokkesletten
   const confirmNewKlokke = async () => {
     try {
-      const response = await fetch('http://172.20.10.3:8080/data/', {
+      const response = await fetch(`${API_BASE_URL}/endreMaaltidInfo`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          maaltidId: maaltidId,
+          maaltidId: maaltidId.id,
+          maaltidDato: maaltidId.idDato,
           newKlokke: newKlokke
+
         })
       });
       if (response.ok) {
@@ -111,13 +115,20 @@ const FrokostScreen = ({ navigation, route }) => {
     React.useCallback(() => {
       const fetchData = async () => {
         setLoading(true);
+        const maaltidID = maaltidId.id.toString();
+        const datoID = maaltidId.idDato.toString();
+        console.log(maaltidID);
+        console.log(datoID);
         try {
-          const response = await fetch('http://172.20.10.3:8080/data');
-          const result = await response.json();
-          const maaltidData = result.maaltid.maaltider[maaltidId.id - 1];
-          setProductData(maaltidData.produkter); 
-          setMaaltidTittel(maaltidData.title); 
-          setMaaltidKlokke(maaltidData.klokkeslett); 
+          const response = await fetch(`${API_BASE_URL}/readProdukter/${maaltidID}/${datoID}`);
+          const resultat = await response.json();
+          const result = resultat.maaltid;
+          
+          
+          
+          setProductData(result.produkter);
+          setMaaltidTittel(result.title);
+          setMaaltidKlokke(result.klokkeslett);
         } catch (error) {
           console.error('Feil ved henting av produktdata:', error);
         } finally {
@@ -128,7 +139,7 @@ const FrokostScreen = ({ navigation, route }) => {
       fetchData();
 
       return () => {
-        // Rens opp eller fjern eventuelle abonnementer når komponenten er fjernet fra skjermen
+        // Clean up any subscriptions or effects when the component is unmounted
       };
     }, [maaltidId, refreshFlag])
   );
@@ -149,7 +160,10 @@ const FrokostScreen = ({ navigation, route }) => {
           style={styles.info}
         />
       ) : (
-        <Text style={styles.info} onPress={() => setEditingTitle(true)}>{maaltidTittel}</Text>
+        <Text style={styles.info} onPress={() => setEditingTitle(true)}>
+          {maaltidTittel}
+          <Icon name="pencil" style={styles.editIcon}/>
+        </Text>
       )}
 
       {editingKlokke ? (
@@ -161,16 +175,22 @@ const FrokostScreen = ({ navigation, route }) => {
           style={styles.klokke}
         />
       ) : (
-        <Text style={styles.klokke} onPress={() => setEditingKlokke(true)}>Kl: {maaltidKlokke}</Text>
+        <Text style={styles.klokke} onPress={() => setEditingKlokke(true)}>
+          Kl: {maaltidKlokke}
+          <Icon name="pencil" style={styles.editIcon}/>
+        </Text>
       )}
       
+      <Text style={styles.productHeader}>Produkter</Text>
+      <View style={styles.horizontalLine} />
       <View style={styles.viewFlatList}>
         <FlatList
           data={productData}
           keyExtractor={product => product._id}
           renderItem={({ item }) =>
             <ListItem
-              title={item.name}
+              title={item.productName}
+              subTitle={item.angittMengde}
               image={item.image}
               onPress={() => handleDeleteItem(item)}
               icon={"trash-can"} // Legger til handleDeleteItem-funksjonen her
@@ -189,12 +209,14 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     flex: 1,
+    alignContent: "center"
   },
   viewFlatList: {
     marginLeft: 50,
     width: "100%",
     alignItems: "center",
-    marginTop: 200,
+    marginTop: 20, // Redusert fra 100 til 20 for bedre utseende
+    height: 400
   },
   logo: {
     marginLeft: 100,
@@ -229,7 +251,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: "Avenir",
     fontWeight: "700",
-
+    flexDirection: "row",
+    // Legg til for å tillate side-ved-side plassering av tekst og ikon
   },
   klokke:{
     position:"absolute",
@@ -239,8 +262,30 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Avenir",
     fontWeight: "700",
-
-  }
+    flexDirection: "row",
+    // Legg til for å tillate side-ved-side plassering av tekst og ikon
+  },
+  productHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 130,
+    marginLeft: 50,
+    left: 100,
+    
+  },
+  horizontalLine: {
+    borderBottomColor: colors.medium,
+    borderBottomWidth: 1,
+    width: '75%',
+    marginLeft: 50,
+    marginTop: 5,
+    
+  },
+  editIcon: {
+    
+  
+    
+  },
  });
 
 export default FrokostScreen;

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, ActivityIndicator, Dimensions, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Button, ActivityIndicator, Dimensions, Image, TextInput, TouchableOpacity,  } from 'react-native';
 import { CameraView, Camera } from 'expo-camera/next';
 import Icon from '../components/Icon';
 import colors from '../config/colors';
 import ListItem from '../components/ListItem';
 import { PageSlider } from '@pietile-native-kit/page-slider';
 import DeclarationList from '../components/DeclarationList';
+import {API_BASE_URL} from '../config/ipAdress'
 
 
 
@@ -19,6 +20,7 @@ const ScannerScreen = ({ navigation, route }) => {
   const [manualBarcode, setManualBarcode] = useState('');
   const maaltidId = route.params ? route.params.maaltidId : null;
   const [selectedPage, setSelectedPage] = useState(0);
+  const [mengde, setMengde] = useState(0);
 
 
 
@@ -53,6 +55,7 @@ const ScannerScreen = ({ navigation, route }) => {
     const response = await fetchProductData(data);
     setProductData(response);
     setLoading(false);
+    
       
   };
 
@@ -73,6 +76,7 @@ const ScannerScreen = ({ navigation, route }) => {
     setScanned(true);
     setLoading(true);
     setErrorMessage('');
+    console.log(manualBarcode)
     if (manualBarcode.trim() === '') {
       setErrorMessage('Vennligst skriv inn en strekkode.');
       setLoading(false);
@@ -81,8 +85,6 @@ const ScannerScreen = ({ navigation, route }) => {
     try {
       const response = await fetchProductData(manualBarcode.trim());
       setProductData(response);
-      await postDataToServer(response);
-      navigation.navigate('FrokostScreen', {maaltidId}); // Navigerer til FrokostScreen
     } catch (error) {
       console.error('Error handling scanned product:', error);
       setErrorMessage('Feil ved behandling av produkt. Vennligst prøv igjen.');
@@ -112,7 +114,26 @@ const ScannerScreen = ({ navigation, route }) => {
   const postDataToServer = async (productData) => {
     try {
       productData.maaltidId = maaltidId.id;
-      const response = await fetch('http://172.20.10.3:8080/data', {
+      productData.datoId = maaltidId.idDato
+
+
+   
+
+
+
+
+  const originalQuantity = parseFloat(productData.quantity);
+  const forhold = mengde / originalQuantity;
+
+  const updatedNutriments = {};
+  for (const nutrient in productData.nutriments) {
+    updatedNutriments[nutrient] = productData.nutriments[nutrient] * forhold;
+  }
+  productData.nutriments = updatedNutriments;
+  productData.angittMengde = ` Angitt mengde: ${mengde} ${productData.quantityType}`;
+  
+      
+      const response = await fetch(`${API_BASE_URL}/leggeTilProdukt`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -146,7 +167,7 @@ const ScannerScreen = ({ navigation, route }) => {
       <Icon name="arrow-left-bold" onPress={() => (handleBack)} style={styles.back}/>
 
 
-      <Text style = {styles.text}>Scann strekkoden her!</Text>
+      
       <View style={[styles.cameraContainer, { width: cameraWidth }]}>
         <CameraView
           onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
@@ -166,7 +187,9 @@ const ScannerScreen = ({ navigation, route }) => {
           value={manualBarcode}
           placeholder="Skriv inn strekkoden her"
         />
-        <ListItem title="Søk" onPress={handleManualBarcodeInput} style={{height:40, width:150, alignSelf:"center"}} />
+        <TouchableOpacity onPress={handleManualBarcodeInput} style={[styles.button, {height:40, width:150, left: 90, marginTop:10,}]}>
+          <Text style={styles.buttonText}>Søk</Text>
+        </TouchableOpacity>
       </View>
 
       {loading ? (
@@ -196,6 +219,18 @@ const ScannerScreen = ({ navigation, route }) => {
         <TouchableOpacity onPress={(IkkeLeggTil)}>
         <Image style={{width: 100, height:100, position: "absolute", alignSelf: "center", top: 180}} source={require("../assets/kyssUtIcon.png")} resizeMode="contain" />
         </TouchableOpacity>
+
+        <View style={{top:280, width: 70, right: 110, flexDirection: "row", alignSelf: "center"}}>
+          <Text style={styles.angiMengdeText}>Angi mengde:</Text>
+          <View style={styles.mengdeInputContainer}>
+          <TextInput
+            style={{top: 4, }}
+            onChangeText={setMengde}
+            placeholder = {productData.quantityType}
+          />
+          </View>
+        </View>
+
 
         <PageSlider
       style={styles.pageSlider}
@@ -257,7 +292,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     aspectRatio: 1,
     borderRadius: 10,
-    marginTop: 150
+    marginTop: 30
   },
   errorText: {
     color: 'red',
@@ -292,7 +327,7 @@ const styles = StyleSheet.create({
   },
 
   inputContainer:{
-    marginTop: 100
+    marginTop: 50
   },
   text:{
     color: colors.skrift,
@@ -308,7 +343,12 @@ const styles = StyleSheet.create({
     fontFamily: "Avenir",
     fontWeight: "700",
     position: "absolute",
-    top: 610,
+    top: 470,
+
+  },
+  buttonText:{
+    fontFamily: "Avenir",
+    fontSize: 20,
 
   },
   input: {
@@ -358,10 +398,29 @@ const styles = StyleSheet.create({
       marginVertical: 10,
       width: "90%",
       left: 15,
+    },
+    angiMengdeText: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      width: 150
+    },
+    mengdeInputContainer: {
+      borderWidth: 1,
+      borderColor: colors.medium,
+      borderRadius: 5,
+      height: 30,
+      width: 150,
+      bottom: 5,
+      alignItems:"center"
       
       
-
-    }
+    },
+    mengdeInput: {
+      fontSize: 16,
+      padding: 8,
+      width: "50%",
+    },
 
 });
 

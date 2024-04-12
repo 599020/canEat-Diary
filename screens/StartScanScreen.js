@@ -11,7 +11,7 @@ const StartScanScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.10.229:8080/data');
+        const response = await fetch(`${API_BASE_URL}/data`);
         const result = await response.json();
         setProductData(result[0]); // Assuming the response contains only one product
       } catch (error) {
