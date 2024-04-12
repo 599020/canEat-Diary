@@ -47,20 +47,20 @@ const styles = StyleSheet.create({
   title: {
     color: colors.skrift,
     fontSize: 14,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontWeight: "700",
   },
   subTitle: {
     color: colors.skrift,
     fontSize: 12,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     
     
   },
   klokkeslett: {
     color: colors.skrift,
     fontSize: 16,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     
   },
   iconStyle: {
