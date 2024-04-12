@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: colors.skrift,
     fontSize: 24,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontWeight: "700",
     flexDirection: "row",
     // Legg til for å tillate side-ved-side plassering av tekst og ikon
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: colors.skrift,
     fontSize: 20,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontWeight: "700",
     flexDirection: "row",
     // Legg til for å tillate side-ved-side plassering av tekst og ikon
