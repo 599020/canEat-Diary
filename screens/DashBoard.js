@@ -8,6 +8,7 @@ import colors from '../config/colors';
 import { CameraView, Camera } from 'expo-camera/next';
 import * as ImagePicker from 'expo-image-picker';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 
@@ -251,7 +252,11 @@ const handleSeNotat = () => {
 
 
   return (
+    
+
+    
     <View style={styles.container}>
+      <GestureHandlerRootView>
       <Icon name="apple-keyboard-control"  style={styles.kalender}  onPress={() => setVisKalender(true)}/>
       <Icon name="apple-keyboard-control"  style={styles.left}  onPress={() => {setDag("2"); setRefresh(prevState => !prevState);}}/>
       <Image style={styles.logo} source={require("../assets/logo.png")} />
@@ -261,7 +266,10 @@ const handleSeNotat = () => {
       <Text style = {styles.text}>Din dagbok</Text>
       <Text style = {styles.text2}>Måltider for idag</Text>
       <Text style = {styles.text3}>{formattedDate}</Text>
-      <Text style = {{fontFamily: "Avenir", left: 20}}>{maaned}</Text>
+      <Text style = {{fontFamily: "Roboto", left: 20}}>{maaned}</Text>
+      </GestureHandlerRootView>
+      
+      <GestureHandlerRootView>
 
       <View style={styles.horizontalLine} />
       <View style={styles.viewFlatList}>
@@ -284,6 +292,7 @@ const handleSeNotat = () => {
           style={{ width: "90%", }}
         />
       </View>
+      </GestureHandlerRootView>
 
       <View style={styles.absoluteContainer}>
         <ListItem
@@ -306,7 +315,7 @@ const handleSeNotat = () => {
           <Image style={styles.profilIcon} source={require("../assets/profilIcon.png")} />
           
           <TextInput
-            style={{ fontSize: 22, alignSelf: "center" }}
+            style={{ fontSize: 20, alignSelf: "center" }}
             value={nyttMaalTittel}
             onChangeText={setNyttMaalTittel}
             placeholder="Skriv inn Tittel på måltid"
@@ -327,11 +336,11 @@ const handleSeNotat = () => {
           <View style = {{top: 60}}>
 
           <ListItem style={{height: 50, width: 150, alignSelf: "center", }} title={"Ta bilde"} icon={"camera"} onPress={openCamera}></ListItem>
-          <Text style={{fontFamily:"Avenir", alignSelf: "center"}}>eller</Text>
+          <Text style={{fontFamily:"Roboto", alignSelf: "center"}}>eller</Text>
           <ListItem style={{height: 50, width: 150, alignSelf: "center", }} title={"Hent fra kamerarull"} icon={"camera-image"} onPress={pickImage}></ListItem>
           </View>
           {imageUri && <View style={{position: "absolute", alignSelf: "center", bottom: 160, }}>
-          <Text style={{fontFamily:"Avenir", alignSelf: "center"}}>Bruk dette eller finn et nytt!</Text>
+          <Text style={{fontFamily:"Roboto", alignSelf: "center"}}>Bruk dette eller finn et nytt!</Text>
           <Image source={{ uri: imageUri }} style={styles.selectedImage} />
           
           </View>}
@@ -371,6 +380,8 @@ const handleSeNotat = () => {
 )}
       
     </View>
+    
+    
   );
 }
 
@@ -389,14 +400,14 @@ const styles = StyleSheet.create({
   },
   viewFlatList: {
     left: 30,
-    width: 330,
+    width: 300,
     alignItems: "center",
     marginTop: 155,
     height: 300,
     
     borderColor: colors.border,
     borderRadius: 10,
-    height: 350 
+    height: 275 
   },
   
 
@@ -431,7 +442,7 @@ const styles = StyleSheet.create({
   },
   absoluteContainer: {
     position: 'absolute',
-    bottom: 120,
+    bottom: 115,
     alignSelf: 'center',
     width: "75%",
   },
@@ -448,7 +459,7 @@ const styles = StyleSheet.create({
   text:{
     color: colors.skrift,
     fontSize: 28,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontWeight: "700",
     position: "absolute",
     top: 120,
@@ -457,7 +468,7 @@ const styles = StyleSheet.create({
   text2:{
     color: colors.skrift,
     fontSize: 24,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontWeight: "700",
     position: "absolute",
     top: 260,
@@ -466,7 +477,7 @@ const styles = StyleSheet.create({
   text3:{
     color: colors.skrift,
     fontSize: 28,
-    fontFamily: "Avenir",
+    fontFamily: "Roboto",
     fontWeight: "700",
     position: "absolute",
     top: 200,
