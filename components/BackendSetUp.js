@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { API_BASE_URL } from '../config/ipAddress';
 
 export default function BackendSetUp() {
 

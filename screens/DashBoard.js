@@ -101,7 +101,7 @@ export default function DashBoard({ navigation }) {
           // Første fetch-forespørsel
           const response1 = await fetch(`${API_BASE_URL}/readMaaltider/${dag}/${dato}`);
           const result1 = await response1.json();
-          console.log(result1);
+          
 
           const sortedMaaltider = sortMaaltider(result1);
           
@@ -111,17 +111,19 @@ export default function DashBoard({ navigation }) {
           setDag();
           
           
+          
           // Andre fetch-forespørsel
           
           const response2 = await fetch(`${API_BASE_URL}/readNotat/${dag}/${dato}`);
           const result2 = await response2.json();
-          console.log(result2.notat);
+         
           setNotat(result2.notat);
           
         } catch (error) {
           console.error('Feil ved henting av produktdata:', error);
         } finally {
           setLoading(false);
+          
           
 
           
@@ -150,7 +152,7 @@ export default function DashBoard({ navigation }) {
       const nyttMaaltidData = {
         title: nyttMaalTittel,
         klokkeslett: nyttMaalKlokke,
-        bilde: imageUri,
+        bilde: imageUri,  
         idDato: dato
       };
   
@@ -179,6 +181,13 @@ export default function DashBoard({ navigation }) {
   const handleMaaltidPress = (maaltidId) => {
     navigation.navigate("FrokostScreen", { maaltidId });
   };
+
+  // Anta at du har denne funksjonen som navigerer til Statistics-skjermen
+const handleStatisticPress = () => {
+  // Send formattedDate som en parameter til Statistics-skjermen
+  navigation.navigate("Statistics", { dato: dato });
+};
+  
 
 
   // Funksjon for å åpne kameraet og ta et bilde
@@ -305,6 +314,10 @@ const handleSeNotat = () => {
 
       <TouchableOpacity style={styles.seNotatButton} onPress={handleSeNotat}>
         <Text style={styles.seNotatButtonText}>Se Notat</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.seStatistikkButton} onPress={handleStatisticPress}>
+        <Text style={styles.seNotatButtonText}>Se Statistikk</Text>
       </TouchableOpacity>
 
       {nyttMaal &&
@@ -513,6 +526,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.light,
     borderRadius: 5,
     right: 100
+  },
+  seStatistikkButton: {
+    alignSelf:"center",
+    marginTop: -40,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: colors.light,
+    borderRadius: 5,
+    left: 50, 
   },
   seNotatButtonText: {
     color: colors.medium,
