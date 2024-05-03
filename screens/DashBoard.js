@@ -8,7 +8,7 @@ import colors from '../config/colors';
 import { CameraView, Camera } from 'expo-camera/next';
 import * as ImagePicker from 'expo-image-picker';
 import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 
 
@@ -101,7 +101,7 @@ export default function DashBoard({ navigation }) {
           // Første fetch-forespørsel
           const response1 = await fetch(`${API_BASE_URL}/readMaaltider/${dag}/${dato}`);
           const result1 = await response1.json();
-          
+          console.log(result1);
 
           const sortedMaaltider = sortMaaltider(result1);
           
@@ -111,19 +111,17 @@ export default function DashBoard({ navigation }) {
           setDag();
           
           
-          
           // Andre fetch-forespørsel
           
           const response2 = await fetch(`${API_BASE_URL}/readNotat/${dag}/${dato}`);
           const result2 = await response2.json();
-         
+          console.log(result2.notat);
           setNotat(result2.notat);
           
         } catch (error) {
           console.error('Feil ved henting av produktdata:', error);
         } finally {
           setLoading(false);
-          
           
 
           
@@ -152,7 +150,7 @@ export default function DashBoard({ navigation }) {
       const nyttMaaltidData = {
         title: nyttMaalTittel,
         klokkeslett: nyttMaalKlokke,
-        bilde: imageUri,  
+        bilde: imageUri,
         idDato: dato
       };
   
@@ -182,12 +180,15 @@ export default function DashBoard({ navigation }) {
     navigation.navigate("FrokostScreen", { maaltidId });
   };
 
+  const handleHealthIconPress = () => {
+    navigation.navigate("FormScreen" );
+  };
+
   // Anta at du har denne funksjonen som navigerer til Statistics-skjermen
-const handleStatisticPress = () => {
-  // Send formattedDate som en parameter til Statistics-skjermen
-  navigation.navigate("Statistics", { dato: dato });
-};
-  
+  const handleStatisticPress = () => {
+    // Send formattedDate som en parameter til Statistics-skjermen
+    navigation.navigate("Statistics", { dato: dato });
+  };
 
 
   // Funksjon for å åpne kameraet og ta et bilde
@@ -250,9 +251,9 @@ const handleNotatEndring = (nyttNotat) => {
 
 const handleSeNotat = () => {
   setVisNotat(prevState => !prevState);
-
   // Vis notatet når knappen trykkes
 };
+
 
 
 
@@ -265,7 +266,7 @@ const handleSeNotat = () => {
 
     
     <View style={styles.container}>
-      <GestureHandlerRootView>
+   
       <Icon name="apple-keyboard-control"  style={styles.kalender}  onPress={() => setVisKalender(true)}/>
       <Icon name="apple-keyboard-control"  style={styles.left}  onPress={() => {setDag("2"); setRefresh(prevState => !prevState);}}/>
       <Image style={styles.logo} source={require("../assets/logo.png")} />
@@ -276,9 +277,7 @@ const handleSeNotat = () => {
       <Text style = {styles.text2}>Måltider for idag</Text>
       <Text style = {styles.text3}>{formattedDate}</Text>
       <Text style = {{fontFamily: "Roboto", left: 20}}>{maaned}</Text>
-      </GestureHandlerRootView>
       
-      <GestureHandlerRootView>
 
       <View style={styles.horizontalLine} />
       <View style={styles.viewFlatList}>
@@ -301,7 +300,7 @@ const handleSeNotat = () => {
           style={{ width: "90%", }}
         />
       </View>
-      </GestureHandlerRootView>
+      
 
       <View style={styles.absoluteContainer}>
         <ListItem
@@ -507,7 +506,7 @@ const styles = StyleSheet.create({
   left:{
     position: "absolute",
     top: 200,
-    left: 20,
+    left: 40,
     transform: [{ rotate: '270deg' }]
     
     

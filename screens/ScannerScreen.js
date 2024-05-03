@@ -217,10 +217,10 @@ const ScannerScreen = ({ navigation, route }) => {
         <Image style={styles.image} source={{uri : productData.image}} resizeMode="contain" />
         
         <TouchableOpacity onPress={(IkkeLeggTil)}>
-        <Image style={{width: 100, height:100, position: "absolute", alignSelf: "center", top: 180}} source={require("../assets/kyssUtIcon.png")} resizeMode="contain" />
+        <Image style={{width: 100, height:100, position: "absolute", alignSelf: "center", top: 120}} source={require("../assets/kyssUtIcon.png")} resizeMode="contain" />
         </TouchableOpacity>
 
-        <View style={{top:280, width: 70, right: 110, flexDirection: "row", alignSelf: "center"}}>
+        <View style={{top:250, width: 76, right: 110, flexDirection: "row", alignSelf: "center"}}>
           <Text style={styles.angiMengdeText}>Angi mengde:</Text>
           <View style={styles.mengdeInputContainer}>
           <TextInput
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
       height:180,
       position: "absolute",
       alignSelf: "center",
-      top: 160
+      top: 130
     },
     leggTil:{
       position: "absolute",
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     pageSlider:{
       position: "absolute",
       alignSelf: "center",
-      bottom: 170,
+      bottom: 130,
     },
     page:{
 

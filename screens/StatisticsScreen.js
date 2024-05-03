@@ -26,7 +26,6 @@ export default function StatisticsScreen({ route }) {
       setSelectedDate(null);
     }
   };
-  
 
   const fetchDataForNutrient = async (nutrient) => {
     try {
@@ -41,7 +40,7 @@ export default function StatisticsScreen({ route }) {
       };
 
       const nutrientKey = nutrient === "calories" ? "energyPr100kcal" : `${nutrient}Pr100`;
-      
+
       const dailyNutrientSum = {};
 
       data.forEach(måltid => {
@@ -58,12 +57,22 @@ export default function StatisticsScreen({ route }) {
       });
 
       Object.keys(dailyNutrientSum).forEach(idDato => {
-        nutrientData.labels.push(idDato);
+        const date = new Date(idDato);
+        const formattedDate = date.getDate(); // Henter ut bare dagen fra datoen
+        console.log(formattedDate);
+        nutrientData.labels.push(formattedDate);
         nutrientData.datasets[0].data.push(Math.round(dailyNutrientSum[idDato])); // Rund til nærmeste heltall
       });
-      
 
-      return nutrientData;
+      // Beregn gjennomsnittet
+      const average = Object.values(dailyNutrientSum).reduce((total, value) => total + value, 0) / Object.keys(dailyNutrientSum).length;
+
+      nutrientData.datasets.push({
+        data: Array(nutrientData.labels.length).fill(average),
+        color: (opacity = 1) => colors.primary, // Velg fargen på gjennomsnittslinjen
+      });
+
+      return { nutrientData, average };
     } catch (error) {
       console.error('Feil ved henting av data:', error);
     }
@@ -76,10 +85,27 @@ export default function StatisticsScreen({ route }) {
     const caloriesData = await fetchDataForNutrient("calories");
 
     setChartData({
-      protein: proteinData,
-      carbohydrates: carbohydratesData,
-      fat: fatData,
-      calories: caloriesData
+      protein: proteinData.nutrientData,
+      carbohydrates: carbohydratesData.nutrientData,
+      fat: fatData.nutrientData,
+      calories: caloriesData.nutrientData
+    });
+    setAverage(proteinData.average, carbohydratesData.average, fatData.average, caloriesData.average);
+  };
+
+  const [averageValues, setAverageValues] = useState({
+    protein: null,
+    carbohydrates: null,
+    fat: null,
+    calories: null
+  });
+
+  const setAverage = (protein, carbohydrates, fat, calories) => {
+    setAverageValues({
+      protein,
+      carbohydrates,
+      fat,
+      calories
     });
   };
 
@@ -93,14 +119,14 @@ export default function StatisticsScreen({ route }) {
       <TouchableOpacity onPress={() => {
         setSelectedDate('startDate');
         toggleDatePicker();
-}}>
-  <Text style={styles.datePickerText}>{datoFra ? datoFra.toDateString() : "Start Date"}</Text>
+      }}>
+        <Text style={styles.datePickerText}>{datoFra ? datoFra.toDateString() : "Start Date"}</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => {
         setSelectedDate('endDate');
         toggleDatePicker();
       }}>
-  <Text style={styles.datePickerText}>{datoTil ? datoTil.toDateString() : "End Date"}</Text>
+        <Text style={styles.datePickerText}>{datoTil ? datoTil.toDateString() : "End Date"}</Text>
       </TouchableOpacity>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -115,24 +141,36 @@ export default function StatisticsScreen({ route }) {
             <View key={index} style={{ marginBottom: 20 }}>
               <Text style={styles.chartHeader}>{nutrient.charAt(0).toUpperCase() + nutrient.slice(1)}</Text>
               <LineChart
-  data={chartData[nutrient]}
-  width={Dimensions.get('window').width - 40}
-  height={220}
-  // Fjerner yAxisLabel
-  chartConfig={{
-    backgroundGradientFrom: colors.white,
-    backgroundGradientTo: colors.white,
-    color: (opacity = 1) => colors.skrift,
-    labelColor: (opacity = 1) => colors.skrift,
-    strokeWidth: 3,
-    style: {
-      fontSize: 2
-    },
-  }}
-  verticalLabelRotation={10}
-  fromZero={true}
-/>
-
+                data={chartData[nutrient]}
+                width={Dimensions.get('window').width - 40}
+                height={220}
+                withVerticalLabels={true}
+                withHorizontalLabels={true}
+                chartConfig={{
+                  backgroundGradientFrom: colors.white,
+                  backgroundGradientTo: colors.white,
+                  color: (opacity = 1) => colors.skrift,
+                  labelColor: (opacity = 1) => colors.skrift,
+                  strokeWidth: 3,
+                  style: {
+                    fontSize: 2
+                  },
+                }}
+                verticalLabelRotation={10}
+                fromZero={true}
+                decorator={() => {
+                  const average = averageValues[nutrient];
+                  if (average !== null && typeof average !== 'undefined') {
+                    return (
+                      <View style={styles.averageLine}>
+                        <Text style={styles.averageLineText}>Gjennomsnitt: {average.toFixed(2)}</Text>
+                      </View>
+                    );
+                  }
+                  return null; // Return null if average is null or undefined
+                }}
+                
+              />
             </View>
           )
         ))}
@@ -165,5 +203,20 @@ const styles = StyleSheet.create({
     color: colors.skrift,
     alignSelf: 'center',
     marginBottom: 10,
+  },
+  averageLine: {
+    position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    padding: 5,
+    borderRadius: 5,
+    right: -30, // Adjust the right position as needed
+    top: 80, // Adjust the top position as needed
+  },
+  averageLineText: {
+    fontSize: 12,
+    color: colors.white,
+    marginLeft: 5,
   },
 });

@@ -147,7 +147,7 @@ const FrokostScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Icon name="arrow-left-bold" onPress={() => (handleBack)} style={styles.back}/>
+      <Icon name="arrow-left-bold" onPress={handleBack} style={styles.back}/>
       <Image style={styles.logo} source={require("../assets/logo.png")} />
       <Image style={styles.heimIcon} source={require("../assets/heimIcon.png")} />
       <Image style={styles.profilIcon} source={require("../assets/profilIcon.png")} />
@@ -241,6 +241,7 @@ const styles = StyleSheet.create({
   back:{
     position: "absolute",
     marginTop: 150,
+    left:20
    
   },
   info:{

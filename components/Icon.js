@@ -5,6 +5,7 @@ import { MaterialCommunityIcons} from "@expo/vector-icons";
 
 export default function Icon({ name, onPress, style }) {
     return (
+      
 
     
       <View style={style}>
